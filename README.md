@@ -9,6 +9,14 @@ Set the system variable PYTHON_INCLUDE_DIRS to [YOUR_INSTALL_PATH]\include
 Set the system variable PYTHON_LIBRARIES to [YOUR_INSTALL_PATH]\libs  
 Set the system variable PYTHONPATH to [YOUR_INSTALL_PATH]
 
+Having these environment variables set should enable you  
+to build the plugin by issuing "make" from the console.
+
+If you are new with Stingray plugins you can find all  
+needed information on the official Stingray plugin page:  
+https://github.com/AutodeskGames/stingray-plugin
+(There is also an step by step installation guide and Wiki)
+
 ## Known Problems in Debug Builds
 
 If you wanna debug the plugin yourself and cannot get it run, this is because your python  
@@ -19,9 +27,7 @@ Go into the python lib Folder ([YOUR_INSTALL_PATH]/libs) and copy "python27.lib"
 Open pyconfig.h ([YOUR_INSTALL_PATH]/include/pyconfig.h) and comment out the line "#define Py_DEBUG"  
 After this it should be possible to link to Python in Debug Builds
 
-If you are new with Stingray plugins you can find all  
-needed information on the official Stingray plugin page:  
-https://github.com/AutodeskGames/stingray-plugin
+
 
 ## Additional information?
 
