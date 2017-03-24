@@ -17,6 +17,16 @@ needed information on the official Stingray plugin page:
 https://github.com/AutodeskGames/stingray-plugin
 (There is also an step by step installation guide and Wiki)
 
+## How to get started with Python?
+
+The example project of this plugin contains an example script how to hook your python code into Stingray
+
+## Important Notes
+
+This is a free time / hackday based project of one of the Stingray developers and not under official  
+release from Autodesk. I try to add features to the Python API from time to time but using this code  
+is at own risk and you should always backup your project files beforehand.
+
 ## Known Problems in Debug Builds
 
 If you wanna debug the plugin yourself and cannot get it run, this is because your python  
@@ -26,15 +36,3 @@ yourself and build it in debug or use this workound:
 Go into the python lib Folder ([YOUR_INSTALL_PATH]/libs) and copy "python27.lib" to "python27_d.lib"  
 Open pyconfig.h ([YOUR_INSTALL_PATH]/include/pyconfig.h) and comment out the line "#define Py_DEBUG"  
 After this it should be possible to link to Python in Debug Builds
-
-
-
-## Additional information?
-
-The example project of this plugin contains example scripts how to hook your python code into Stingray
-
-## Important Notes
-
-This is a free time / hackday based project of one of the Stingray developers and not under official  
-release from Autodesk. I try to add features to the Python API from time to time but using this code  
-is at own risk and you should always backup your project files beforehand.
