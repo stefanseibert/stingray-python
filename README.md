@@ -29,9 +29,9 @@ is at own risk and you should always backup your project files beforehand.
 
 ## Known Problems in Debug Builds
 
-If you wanna debug the plugin yourself and cannot get it run, this is because your python  
-installation is by default not installed as debug version. Either you get the python sources  
-yourself and build it in debug or use this workound:
+If you wanna debug the plugin yourself under windows and cannot get it run, this is because your python  
+installation is by default not installed with libraries in debug. Either you get the python sources  
+yourself and build them in debug or use this workaround:
 
 Go into the python lib Folder ([YOUR_INSTALL_PATH]/libs) and copy "python27.lib" to "python27_d.lib"  
 Open pyconfig.h ([YOUR_INSTALL_PATH]/include/pyconfig.h) and comment out the line "#define Py_DEBUG"  
