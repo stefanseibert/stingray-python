@@ -4,9 +4,9 @@ Stingray is a real-time rendering engine from Autodesk:
 http://www.stingrayengine.com
 
 Installation Steps (only Windows 64bit currently):
-Install Python 2.7.12 64bit into a location on your disk, further referred as [YOUR_INSTALL_PATH]
-Set the system variable PYTHON_INCLUDE_DIRS to [YOUR_INSTALL_PATH]\include
-Set the system variable PYTHON_LIBRARIES to [YOUR_INSTALL_PATH]\libs
+Install Python 2.7.12 64bit into a location on your disk, further referred as [YOUR_INSTALL_PATH]  
+Set the system variable PYTHON_INCLUDE_DIRS to [YOUR_INSTALL_PATH]\include  
+Set the system variable PYTHON_LIBRARIES to [YOUR_INSTALL_PATH]\libs  
 Set the system variable PYTHONPATH to [YOUR_INSTALL_PATH]
 
 ## Known Problems in Debug Builds
@@ -20,7 +20,7 @@ Open pyconfig.h ([YOUR_INSTALL_PATH]/include/pyconfig.h) and comment out the lin
 After this it should be possible to link to Python in Debug Builds
 
 If you are new with Stingray plugins you can find all 
-needed information on the official Stingray plugin page:
+needed information on the official Stingray plugin page:  
 https://github.com/AutodeskGames/stingray-plugin
 
 ## Additional information?
