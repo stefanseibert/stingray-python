@@ -1,0 +1,11 @@
+
+data_directory = "../../build/python_project_data"
+default_startup_level = "python"
+description = "Create a python project that demonstrates the usages of the Stingray plugin."
+libraries = {
+}
+name = "Python Project"
+reverse_forward_axis = true
+source_directory = "./"
+thumbnail = "python.svg"
+version = "1.9.0.0"
