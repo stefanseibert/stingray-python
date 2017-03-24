@@ -1,5 +1,4 @@
 #pragma once
-#include <Python.h>
 #include "python_basic.h"
 #include "engine_plugin_api\c_api\c_api_input_controller.h"
 #include "engine_plugin_api\c_api\c_api_keyboard.h"

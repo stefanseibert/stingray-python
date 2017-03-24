@@ -1,7 +1,6 @@
 #pragma once
 #include <Python.h>
 #include "python_plugin.h"
-#include "application/plugin/c_api/c_api_application.h"
 
 namespace PLUGIN_NAMESPACE
 {

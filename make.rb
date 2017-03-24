@@ -86,6 +86,9 @@ $script_dir = File.expand_path(File.dirname(__FILE__))
 $build_dir = File.join($script_dir, "build")
 $lib_dir = ENV["SR_LIB_DIR"] || $build_dir
 $lib_dir = $lib_dir.gsub("\\", "/")
+$py_include_dir = ENV["PYTHON_INCLUDE_DIRS"]
+$py_lib_dir = ENV["PYTHON_LIBRARIES"]
+$py_dir = ENV["PYTHON_LIBRARIES"]
 
 # Define valid options
 $platforms = ["win32", "win64", "ios", "android", "xb1", "ps4", "webgl", "uwp32", "uwp64", "linux"]

@@ -66,23 +66,25 @@ namespace PLUGIN_NAMESPACE
 		if (PyArg_ParseTupleAndKeywords(empty, keywords, "|iiiiif", const_cast<char**>(keyword_list),&disable_apex_cloth, 
 										&disable_physics, &disable_rendering, &disable_sound,&enable_replay, &apex_lod_budget))
 		{
-			CApiWorldConfig c = PythonPlugin::get_api()._script->Application->get_default_world_settings();
-			if (disable_apex_cloth != INT_MAX)
-				c.physics_world_settings.apex_cloth = !disable_apex_cloth;
-			if (disable_physics != INT_MAX)
-				c.disable_physics = disable_physics;
-			if (disable_rendering != INT_MAX)
-				c.disable_rendering = disable_rendering;
-			if (disable_sound != INT_MAX)
-				c.disable_sound = disable_sound;
-			if (enable_replay != INT_MAX)
-				c.enable_replay = enable_replay;
-			if (disable_apex_cloth != INT_MAX && apex_lod_budget != 0.0f)
-				c.physics_world_settings.apex_lod_resource_budget = apex_lod_budget;
-			WorldPtr world_ptr = PythonPlugin::get_api()._script->Application->new_world(&c);
-			PyObject* python_world_ptr = PyLong_FromVoidPtr(world_ptr);
-			Py_IncRef(python_world_ptr);
-			return python_world_ptr;
+			//TODO PUSH get_default_world_settings to stingray plugin api
+			//CApiWorldConfig c = PythonPlugin::get_api()._script->Application->get_default_world_settings();
+			//if (disable_apex_cloth != INT_MAX)
+			//	c.physics_world_settings.apex_cloth = !disable_apex_cloth;
+			//if (disable_physics != INT_MAX)
+			//	c.disable_physics = disable_physics;
+			//if (disable_rendering != INT_MAX)
+			//	c.disable_rendering = disable_rendering;
+			//if (disable_sound != INT_MAX)
+			//	c.disable_sound = disable_sound;
+			//if (enable_replay != INT_MAX)
+			//	c.enable_replay = enable_replay;
+			//if (disable_apex_cloth != INT_MAX && apex_lod_budget != 0.0f)
+			//	c.physics_world_settings.apex_lod_resource_budget = apex_lod_budget;
+			//WorldPtr world_ptr = PythonPlugin::get_api()._script->Application->new_world(&c);
+			//PyObject* python_world_ptr = PyLong_FromVoidPtr(world_ptr);
+			//Py_IncRef(python_world_ptr);
+			//return python_world_ptr;
+			return nullptr;
 		}
 
 		PythonPlugin::check_exceptions();
@@ -172,8 +174,9 @@ namespace PLUGIN_NAMESPACE
 		{
 			type_id = IdString64(type_length, type_name);
 			rsc_id = IdString64(rsc_length, rsc_name);
-			if (PythonPlugin::get_api()._script->Application->can_get(type_id.id(), rsc_id.id()))
-				return Py_True;
+			//TODO PUSH can_get to stingray plugin api
+			//if (PythonPlugin::get_api()._script->Application->can_get(type_id.id(), rsc_id.id()))
+			//	return Py_True;
 		}
 
 		PythonPlugin::check_exceptions();

@@ -1,7 +1,5 @@
 #pragma once
-#include <Python.h>
 #include "python_basic.h"
-#include "application/rendering/graph/compile_data.h"
 
 namespace PLUGIN_NAMESPACE
 {

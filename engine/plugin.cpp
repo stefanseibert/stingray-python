@@ -1,7 +1,6 @@
 #include <engine_plugin_api/plugin_api.h>
 #include <plugin_foundation/platform.h>
 #include <python_plugin.h>
-#include "plugins/wwise_plugin/wwise_plugin.h"
 
 extern "C"
 {

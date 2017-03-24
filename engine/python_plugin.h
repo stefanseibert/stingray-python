@@ -1,10 +1,10 @@
 #pragma once
 #include "Windows.h"
-#include <Python.h>
 #include <engine_plugin_api/plugin_api.h>
 #include <plugin_foundation/string.h>
 #include "plugin_foundation/hash_function.h"
 #include <plugin_foundation/stream.h>
+#include <Python.h>
 #include "python_basic.h"
 #include "python_application.h"
 #include "python_capture_frame.h"

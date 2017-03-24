@@ -1,5 +1,4 @@
 #include "python_unit.h"
-#include "application/plugin/c_api/c_api_unit.h"
 
 namespace PLUGIN_NAMESPACE
 {

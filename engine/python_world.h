@@ -1,10 +1,8 @@
 #pragma once
-#include <Python.h>
 #include "python_basic.h"
 #include "plugin_foundation/id_string.h"
 #include "plugin_foundation/vector.h"
 #include "plugin_foundation/matrix4x4.h"
-#include "foundation/math/types.h"
 
 namespace PLUGIN_NAMESPACE
 {

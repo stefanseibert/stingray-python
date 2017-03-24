@@ -1,8 +1,7 @@
 #pragma once
 
-//{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by wwise_plugin.rc
+// Used by python_plugin.rc
 //
 #define VS_VERSION_INFO                 1
 
