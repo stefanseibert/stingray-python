@@ -3,7 +3,7 @@
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initunit(void);
+	PyMODINIT_FUNC PyInit_Unit(void);
 
 	class PythonUnit
 	{

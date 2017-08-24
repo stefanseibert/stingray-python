@@ -7,13 +7,13 @@ namespace PLUGIN_NAMESPACE
 		{ NULL, NULL, 0, NULL }        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initcaptureframe(void)
+	PyMODINIT_FUNC PyInit_CaptureFrame(void)
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
-			"stingray.CaptureFrame",
+			"CaptureFrame",
 			"Stingray CaptureFrame Python Module",
 			-1,
 			captureframe_methods,

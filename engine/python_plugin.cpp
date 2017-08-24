@@ -17,7 +17,7 @@ namespace PLUGIN_NAMESPACE
 		static uint64_t python_boot_file_id = hash64(PYTHON_BOOT_FILE);
 	}
 
-//#define WAITFORDEBUGGER
+#define WAITFORDEBUGGER
 
 	void wait_for_debugger()
 	{
@@ -287,7 +287,7 @@ namespace PLUGIN_NAMESPACE
 		{NULL, NULL, 0, NULL}        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initstingray (void)
+	PyMODINIT_FUNC PyInit_stingray(void)
 	{
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
@@ -298,13 +298,11 @@ namespace PLUGIN_NAMESPACE
 			NULL, NULL, NULL, NULL
 		};
 		PyObject* module = PyModule_Create(&moduledef);
-		if (module == NULL)
-			return NULL;
 		PythonPlugin::set_stingray_module(module);
 		return module;
 	}
 
-	PyMODINIT_FUNC initwrite (void)
+	PyMODINIT_FUNC PyInit_write(void)
 	{
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
@@ -315,13 +313,11 @@ namespace PLUGIN_NAMESPACE
 			NULL, NULL, NULL, NULL
 		};
 		PyObject* module = PyModule_Create(&moduledef);
-		if (module == NULL)
-			return NULL;
 		PySys_SetObject("stdout", module);
 		return module;
 	}
 
-	PyMODINIT_FUNC initerror (void)
+	PyMODINIT_FUNC PyInit_error(void)
 	{
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
@@ -332,8 +328,6 @@ namespace PLUGIN_NAMESPACE
 			NULL, NULL, NULL, NULL
 		};
 		PyObject* module = PyModule_Create(&moduledef);
-		if (module == NULL)
-			return NULL;
 		PySys_SetObject("stderr", module);
 		return module;
 	}
@@ -350,21 +344,26 @@ namespace PLUGIN_NAMESPACE
 		PythonSession &p = *python_session;
 
 		// Initialize Python Interpreter and Main Stingray Module
+		wchar_t *application_name = L"Stingray";
+		PyImport_AppendInittab("stingray", PyInit_stingray);
+		
+		Py_SetProgramName(application_name);
 		Py_Initialize();
-		initwrite();
-		initerror();
-		initstingray();
+		PyInit_write();
+		PyInit_error();
+		PyImport_ImportModule("stingray");
+
 
 		// Initialize Built In Python Modules
-		initapplication();
-		initcaptureframe();
-		initkeyboard();
-		initlevel();
-		initshadingenvironment();
-		initstoryteller();
-		initunit();
-		initwindow();
-		initworld();
+		PyInit_Application();
+		PyInit_CaptureFrame();
+		PyInit_Keyboard();
+		PyInit_Level();
+		PyInit_ShadingEnvironment();
+		PyInit_StoryTeller();
+		PyInit_Unit();
+		PyInit_Window();
+		PyInit_World();
 
 		// Initialize Custom Python Modules
 		// ...

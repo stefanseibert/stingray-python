@@ -11,13 +11,13 @@ namespace PLUGIN_NAMESPACE
 		{ NULL, NULL, 0, NULL }        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initlevel(void)
+	PyMODINIT_FUNC PyInit_Level(void)
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
-			"stingray.Level",
+			"Level",
 			"Stingray Level Python Module",
 			-1,
 			level_methods,

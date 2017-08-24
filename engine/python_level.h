@@ -3,7 +3,7 @@
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initlevel(void);
+	PyMODINIT_FUNC PyInit_Level(void);
 
 	class PythonLevel
 	{

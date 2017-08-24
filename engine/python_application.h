@@ -3,7 +3,7 @@
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initapplication(void);
+	PyMODINIT_FUNC PyInit_Application(void);
 
 	class PythonApplication
 	{

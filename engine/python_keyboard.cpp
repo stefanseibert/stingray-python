@@ -13,13 +13,13 @@ namespace PLUGIN_NAMESPACE
 		{ NULL, NULL, 0, NULL }        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initkeyboard(void)
+	PyMODINIT_FUNC PyInit_Keyboard(void)
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
-			"stingray.Keyboard",
+			"Keyboard",
 			"Stingray Keyboard Python Module",
 			-1,
 			keyboard_methods,

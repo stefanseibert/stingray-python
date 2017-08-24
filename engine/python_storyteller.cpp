@@ -7,13 +7,13 @@ namespace PLUGIN_NAMESPACE
 		{ NULL, NULL, 0, NULL }        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initstoryteller(void)
+	PyMODINIT_FUNC PyInit_StoryTeller(void)
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
-			"stingray.StoryTeller",
+			"StoryTeller",
 			"Stingray StoryTeller Python Module",
 			-1,
 			storyteller_methods,

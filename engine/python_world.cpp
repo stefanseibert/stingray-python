@@ -15,13 +15,13 @@ namespace PLUGIN_NAMESPACE
 		{ NULL, NULL, 0, NULL }        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initworld(void)
+	PyMODINIT_FUNC PyInit_World(void)
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
-			"stingray.World",
+			"World",
 			"Stingray World Python Module",
 			-1,
 			world_methods,

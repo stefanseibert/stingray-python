@@ -6,7 +6,7 @@
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initworld(void);
+	PyMODINIT_FUNC PyInit_World(void);
 
 	class PythonWorld
 	{

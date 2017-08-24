@@ -7,13 +7,13 @@ namespace PLUGIN_NAMESPACE
 		{ NULL, NULL, 0, NULL }        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initshadingenvironment(void)
+	PyMODINIT_FUNC PyInit_ShadingEnvironment(void)
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
 		static struct PyModuleDef moduledef = {
 			PyModuleDef_HEAD_INIT,
-			"stingray.ShadingEnvironment",
+			"ShadingEnvironment",
 			"Stingray ShadingEnvironment Python Module",
 			-1,
 			shadingenvironment_methods,
