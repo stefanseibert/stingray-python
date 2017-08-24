@@ -19,8 +19,17 @@ namespace PLUGIN_NAMESPACE
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
-		app_module = Py_InitModule("stingray.World", world_methods);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"stingray.World",
+			"Stingray World Python Module",
+			-1,
+			world_methods,
+			NULL, NULL, NULL, NULL
+		};
+		app_module = PyModule_Create(&moduledef);
 		PyModule_AddObject(stingray_module, "World", app_module);
+		return app_module;
 	}
 
 	PyObject* PythonWorld::py_create_shading_environment(PyObject* self, PyObject* args)

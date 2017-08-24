@@ -12,8 +12,19 @@ namespace PLUGIN_NAMESPACE
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
-		app_module = Py_InitModule("stingray.Unit", unit_methods);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"stingray.Unit",
+			"Stingray Unit Python Module",
+			-1,
+			unit_methods,
+			NULL, NULL, NULL, NULL
+		};
+		app_module = PyModule_Create(&moduledef);
+		if (app_module == NULL)
+			return NULL;
 		PyModule_AddObject(stingray_module, "Unit", app_module);
+		return app_module;
 	}
 
 	PyObject* PythonUnit::py_camera(PyObject* self, PyObject* args)

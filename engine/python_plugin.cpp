@@ -172,14 +172,24 @@ namespace PLUGIN_NAMESPACE
 			PyObject* error_type;
 			PyObject* error_value;
 			PyObject* error_callstack;
-			PyErr_Fetch(&error_type, &error_value, &error_callstack); 
-			error(PyString_AsString(PyObject_Str(error_value)));
+			PyErr_Fetch(&error_type, &error_value, &error_callstack);
+			PyObject* str_error_type = PyObject_Repr(error_type);
+			PyObject* pyString = PyUnicode_AsEncodedString(str_error_type, "utf-8", "Error ~");
+
+			const char *errorString = PyBytes_AS_STRING(pyString);
+			error(errorString);
+
 			if(error_type)
-				Py_DecRef(error_type);
+				Py_XDECREF(error_type);
 			if (error_value)
-				Py_DecRef(error_value);
+				Py_XDECREF(error_value);
 			if (error_callstack)
-				Py_DecRef(error_callstack);
+				Py_XDECREF(error_callstack);
+			if (str_error_type)
+				Py_XDECREF(str_error_type);
+			if (pyString)
+				Py_XDECREF(pyString);
+
 			PyErr_Clear();
 			return true;
 		}
@@ -279,24 +289,53 @@ namespace PLUGIN_NAMESPACE
 
 	PyMODINIT_FUNC initstingray (void)
 	{
-		PyObject* mod = Py_InitModule("stingray", stingray_methods);
-		PythonPlugin::set_stingray_module(mod);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"stingray",
+			"Stingray Python Module",
+			-1,
+			stingray_methods,
+			NULL, NULL, NULL, NULL
+		};
+		PyObject* module = PyModule_Create(&moduledef);
+		if (module == NULL)
+			return NULL;
+		PythonPlugin::set_stingray_module(module);
+		return module;
 	}
 
 	PyMODINIT_FUNC initwrite (void)
 	{
-		PyObject *m = Py_InitModule("write", write_methods);
-		if (m == NULL)
-			return;
-		PySys_SetObject("stdout", m);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"write",
+			"Stingray Write Output Module",
+			-1,
+			write_methods,
+			NULL, NULL, NULL, NULL
+		};
+		PyObject* module = PyModule_Create(&moduledef);
+		if (module == NULL)
+			return NULL;
+		PySys_SetObject("stdout", module);
+		return module;
 	}
 
 	PyMODINIT_FUNC initerror (void)
 	{
-		PyObject *m = Py_InitModule("error", error_methods);
-		if (m == NULL)
-			return;
-		PySys_SetObject("stderr", m);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"error",
+			"Stingray Error Output Module",
+			-1,
+			error_methods,
+			NULL, NULL, NULL, NULL
+		};
+		PyObject* module = PyModule_Create(&moduledef);
+		if (module == NULL)
+			return NULL;
+		PySys_SetObject("stderr", module);
+		return module;
 	}
 
 	void PythonPlugin::setup_game(GetApiFunction get_engine_api)

@@ -15,8 +15,19 @@ namespace PLUGIN_NAMESPACE
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
-		app_module = Py_InitModule("stingray.Level", level_methods);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"stingray.Level",
+			"Stingray Level Python Module",
+			-1,
+			level_methods,
+			NULL, NULL, NULL, NULL
+		};
+		app_module = PyModule_Create(&moduledef);
+		if (app_module == NULL)
+			return NULL;
 		PyModule_AddObject(stingray_module, "Level", app_module);
+		return app_module;
 	}
 
 	PyObject* PythonLevel::py_spawn_background(PyObject* self, PyObject* args)
