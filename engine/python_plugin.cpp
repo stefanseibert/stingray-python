@@ -174,10 +174,17 @@ namespace PLUGIN_NAMESPACE
 			PyObject* error_callstack;
 			PyErr_Fetch(&error_type, &error_value, &error_callstack);
 			PyObject* str_error_type = PyObject_Repr(error_type);
-			PyObject* pyString = PyUnicode_AsEncodedString(str_error_type, "utf-8", "Error ~");
+			PyObject* str_error_value = PyObject_Repr(error_value);
+			PyObject* str_error_callstack = PyObject_Repr(error_callstack);
+			PyObject* pyType = PyUnicode_AsEncodedString(str_error_type, "utf-8", "Error ~");
+			PyObject* pyValue = PyUnicode_AsEncodedString(str_error_value, "utf-8", "Error ~");
+			PyObject* pyCallstack = PyUnicode_AsEncodedString(str_error_callstack, "utf-8", "Error ~");
 
-			const char *errorString = PyBytes_AS_STRING(pyString);
-			error(errorString);
+			const char *errorType = PyBytes_AS_STRING(pyType);
+			const char *errorString = PyBytes_AS_STRING(pyValue);
+			const char *errorCallstack = PyBytes_AS_STRING(pyCallstack);
+			error(errorType, errorString);
+			error("Callstack", errorCallstack);
 
 			if(error_type)
 				Py_XDECREF(error_type);
@@ -187,8 +194,16 @@ namespace PLUGIN_NAMESPACE
 				Py_XDECREF(error_callstack);
 			if (str_error_type)
 				Py_XDECREF(str_error_type);
-			if (pyString)
-				Py_XDECREF(pyString);
+			if (str_error_value)
+				Py_XDECREF(str_error_value);
+			if (str_error_callstack)
+				Py_XDECREF(str_error_callstack);
+			if (pyType)
+				Py_XDECREF(pyType);
+			if (pyValue)
+				Py_XDECREF(pyValue);
+			if (pyCallstack)
+				Py_XDECREF(pyCallstack);
 
 			PyErr_Clear();
 			return true;
@@ -344,15 +359,13 @@ namespace PLUGIN_NAMESPACE
 		PythonSession &p = *python_session;
 
 		// Initialize Python Interpreter and Main Stingray Module
-		wchar_t *application_name = L"Stingray";
-		PyImport_AppendInittab("stingray", PyInit_stingray);
+		Py_SetProgramName(L"Stingray");
+		PyImport_AppendInittab("stingray", PyInit_stingray);		
 		
-		Py_SetProgramName(application_name);
 		Py_Initialize();
 		PyInit_write();
 		PyInit_error();
 		PyImport_ImportModule("stingray");
-
 
 		// Initialize Built In Python Modules
 		PyInit_Application();
@@ -481,13 +494,56 @@ namespace PLUGIN_NAMESPACE
 		return "Python";
 	}
 
-	void PythonPlugin::error(const char* message)
+	void PythonPlugin::error(const char* error_msg)
 	{
-		_api._logging->error(get_name(), message);
+		error("Unknown Error", error_msg);
 	}
 
-	void PythonPlugin::info(const char* message)
+	void PythonPlugin::error(const char* error_type, const char* error_msg)
 	{
-		_api._logging->info(get_name(), message);
+		if (strequal("<NULL>", error_msg))
+			return;
+
+		if (strequal(":", error_msg))
+			return;
+
+		char message[MAX_PATH];
+		_snprintf(message, MAX_PATH, "%s: %s", error_type, error_msg);
+
+		char* output = _strdup(message);
+
+		for (int i = 0; i < strlen(output); ++i) {
+			char c = output[i];
+			if (c == '<')
+				output[i] = '[';
+			else if (c == '>')
+				output[i] =']';
+		}
+
+		_api._logging->error(get_name(), output);
+		free(output);
+	}
+
+	void PythonPlugin::info(const char* msg)
+	{
+
+		if (strequal("<NULL>", msg))
+			return;
+
+		if (strequal(":", msg))
+			return;
+
+		char* output = _strdup(msg);
+
+		for (int i = 0; i < strlen(output); ++i) {
+			char c = output[i];
+			if (c == '<')
+				output[i] = '[';
+			else if (c == '>')
+				output[i] = ']';
+		}
+
+		_api._logging->info(get_name(), output);
+		free(output);
 	}
 }
