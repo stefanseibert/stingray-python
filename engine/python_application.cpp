@@ -187,9 +187,8 @@ namespace PLUGIN_NAMESPACE
 		{
 			type_id = IdString64(type_length, type_name);
 			rsc_id = IdString64(rsc_length, rsc_name);
-			//TODO PUSH can_get to stingray plugin api
-			//if (PythonPlugin::get_api()._script->Application->can_get(type_id.id(), rsc_id.id()))
-			//	return Py_True;
+			if (PythonPlugin::get_api()._script->Application->can_get(type_id.id(), rsc_id.id()))
+				return Py_True;
 		}
 
 		PythonPlugin::check_exceptions();
@@ -244,9 +243,10 @@ namespace PLUGIN_NAMESPACE
 		return Py_False;
 	}
 
-	/*PyObject* PythonApplication::py_autoload_resource_package(PyObject* self, PyObject* args)
+	PyObject* PythonApplication::py_autoload_resource_package(PyObject* self, PyObject* args)
 	{
 		// TODO: NO C_API FUNCTIONALITY - CALLING LUA
+
 		const char* package_name = "";
 
 		if (PyArg_ParseTuple(args, "s", &package_name))
@@ -262,5 +262,5 @@ namespace PLUGIN_NAMESPACE
 
 		PythonPlugin::check_exceptions();
 		Py_RETURN_NONE;
-	}*/
+	}
 }

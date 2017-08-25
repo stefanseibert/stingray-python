@@ -17,6 +17,6 @@ namespace PLUGIN_NAMESPACE
 		static PyObject* py_can_get(PyObject* self, PyObject* args);
 		static PyObject* py_quit(PyObject* self, PyObject* args);
 		static PyObject* py_render_world(PyObject* self, PyObject* args);
-		/*static PyObject* py_autoload_resource_package(PyObject* self, PyObject* args);*/
+		static PyObject* py_autoload_resource_package(PyObject* self, PyObject* args);
 	};
 }

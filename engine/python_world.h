@@ -3,6 +3,7 @@
 #include "plugin_foundation/id_string.h"
 #include "plugin_foundation/vector.h"
 #include "plugin_foundation/matrix4x4.h"
+#include "plugin_foundation/quaternion.h"
 
 namespace PLUGIN_NAMESPACE
 {
