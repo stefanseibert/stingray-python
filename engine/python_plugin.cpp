@@ -17,7 +17,7 @@ namespace PLUGIN_NAMESPACE
 		static uint64_t python_boot_file_id = hash64(PYTHON_BOOT_FILE);
 	}
 
-#define WAITFORDEBUGGER
+//#define WAITFORDEBUGGER
 
 	void wait_for_debugger()
 	{
