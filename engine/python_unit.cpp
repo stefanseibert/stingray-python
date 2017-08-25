@@ -213,9 +213,7 @@ namespace PLUGIN_NAMESPACE
 			unit_ref = (UnitRef) unit;
 			if (unit_ref != NULL) {
 				node_id = IdString32(length, node_name);
-				bool result = PythonPlugin::get_api()._script->Unit->has_node(unit_ref, node_id.id());
-
-				if (result)
+				if (PythonPlugin::get_api()._script->Unit->has_node(unit_ref, node_id.id()))
 					return Py_True;
 			}
 		}
