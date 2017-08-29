@@ -6,7 +6,7 @@
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initkeyboard(void);
+	PyMODINIT_FUNC PyInit_Keyboard(void);
 
 	class PythonKeyboard
 	{

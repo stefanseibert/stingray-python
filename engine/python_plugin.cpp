@@ -60,6 +60,7 @@ namespace PLUGIN_NAMESPACE
 		_api._logging = (LoggingApi*)get_engine_api(LOGGING_API_ID);
 		_api._file_system = (FileSystemApi *)get_engine_api(FILESYSTEM_API_ID);
 		_api._resource_manager = (ResourceManagerApi *)get_engine_api(RESOURCE_MANAGER_API_ID);
+		_api._options = (ApplicationOptionsApi*)get_engine_api(APPLICATION_OPTIONS_API_ID);
 		_api._allocator = (AllocatorApi *)get_engine_api(ALLOCATOR_API_ID);
 		_api._allocator_object = _api._allocator->make_plugin_allocator("PythonPlugin");
 		_python_allocator = ApiAllocator(_api._allocator, _api._allocator_object);
@@ -172,14 +173,39 @@ namespace PLUGIN_NAMESPACE
 			PyObject* error_type;
 			PyObject* error_value;
 			PyObject* error_callstack;
-			PyErr_Fetch(&error_type, &error_value, &error_callstack); 
-			error(PyString_AsString(PyObject_Str(error_value)));
+			PyErr_Fetch(&error_type, &error_value, &error_callstack);
+			PyObject* str_error_type = PyObject_Repr(error_type);
+			PyObject* str_error_value = PyObject_Repr(error_value);
+			PyObject* str_error_callstack = PyObject_Repr(error_callstack);
+			PyObject* pyType = PyUnicode_AsEncodedString(str_error_type, "utf-8", "Error ~");
+			PyObject* pyValue = PyUnicode_AsEncodedString(str_error_value, "utf-8", "Error ~");
+			PyObject* pyCallstack = PyUnicode_AsEncodedString(str_error_callstack, "utf-8", "Error ~");
+
+			const char *errorType = PyBytes_AS_STRING(pyType);
+			const char *errorString = PyBytes_AS_STRING(pyValue);
+			const char *errorCallstack = PyBytes_AS_STRING(pyCallstack);
+			error(errorType, errorString);
+			error("Callstack", errorCallstack);
+
 			if(error_type)
-				Py_DecRef(error_type);
+				Py_XDECREF(error_type);
 			if (error_value)
-				Py_DecRef(error_value);
+				Py_XDECREF(error_value);
 			if (error_callstack)
-				Py_DecRef(error_callstack);
+				Py_XDECREF(error_callstack);
+			if (str_error_type)
+				Py_XDECREF(str_error_type);
+			if (str_error_value)
+				Py_XDECREF(str_error_value);
+			if (str_error_callstack)
+				Py_XDECREF(str_error_callstack);
+			if (pyType)
+				Py_XDECREF(pyType);
+			if (pyValue)
+				Py_XDECREF(pyValue);
+			if (pyCallstack)
+				Py_XDECREF(pyCallstack);
+
 			PyErr_Clear();
 			return true;
 		}
@@ -277,26 +303,64 @@ namespace PLUGIN_NAMESPACE
 		{NULL, NULL, 0, NULL}        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initstingray (void)
+	PyMODINIT_FUNC PyInit_stingray(void)
 	{
-		PyObject* mod = Py_InitModule("stingray", stingray_methods);
-		PythonPlugin::set_stingray_module(mod);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"stingray",
+			"Stingray Python Module",
+			-1,
+			stingray_methods,
+			NULL, NULL, NULL, NULL
+		};
+		PyObject* module = PyModule_Create(&moduledef);
+		PythonPlugin::set_stingray_module(module);
+		return module;
 	}
 
-	PyMODINIT_FUNC initwrite (void)
+	PyMODINIT_FUNC PyInit_write(void)
 	{
-		PyObject *m = Py_InitModule("write", write_methods);
-		if (m == NULL)
-			return;
-		PySys_SetObject("stdout", m);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"write",
+			"Stingray Write Output Module",
+			-1,
+			write_methods,
+			NULL, NULL, NULL, NULL
+		};
+		PyObject* module = PyModule_Create(&moduledef);
+		PySys_SetObject("stdout", module);
+		return module;
 	}
 
-	PyMODINIT_FUNC initerror (void)
+	PyMODINIT_FUNC PyInit_error(void)
 	{
-		PyObject *m = Py_InitModule("error", error_methods);
-		if (m == NULL)
-			return;
-		PySys_SetObject("stderr", m);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"error",
+			"Stingray Error Output Module",
+			-1,
+			error_methods,
+			NULL, NULL, NULL, NULL
+		};
+		PyObject* module = PyModule_Create(&moduledef);
+		PySys_SetObject("stderr", module);
+		return module;
+	}
+
+	int setup_project_path(lua_State *L)
+	{
+		const char *project_path = _api._lua->tolstring(L, 1, nullptr);
+		if (project_path == nullptr)
+			return 0;
+
+		PyModule_AddStringConstant(PythonPlugin::get_stingray_module(), "PROJECT_PATH", project_path);
+
+		char message[MAX_PATH];
+		_snprintf(message, MAX_PATH, "%s: %s", "Project Path set to: ", project_path);
+		PythonPlugin::info(message);
+
+		return 0;
 	}
 
 	void PythonPlugin::setup_game(GetApiFunction get_engine_api)
@@ -306,26 +370,31 @@ namespace PLUGIN_NAMESPACE
 
 		wait_for_debugger();
 
+		_api._lua->add_module_function("Python", "set_project_directory", setup_project_path);
+
 		// Initialize Callback Data Structures
 		python_session = MAKE_NEW(get_allocator(), PythonSession, get_allocator());
 		PythonSession &p = *python_session;
 
 		// Initialize Python Interpreter and Main Stingray Module
+		Py_SetProgramName(L"Stingray");
+		PyImport_AppendInittab("stingray", PyInit_stingray);
+
 		Py_Initialize();
-		initwrite();
-		initerror();
-		initstingray();
+		PyInit_write();
+		PyInit_error();
+		PyImport_ImportModule("stingray");
 
 		// Initialize Built In Python Modules
-		initapplication();
-		initcaptureframe();
-		initkeyboard();
-		initlevel();
-		initshadingenvironment();
-		initstoryteller();
-		initunit();
-		initwindow();
-		initworld();
+		PyInit_Application();
+		PyInit_CaptureFrame();
+		PyInit_Keyboard();
+		PyInit_Level();
+		PyInit_ShadingEnvironment();
+		PyInit_StoryTeller();
+		PyInit_Unit();
+		PyInit_Window();
+		PyInit_World();
 
 		// Initialize Custom Python Modules
 		// ...
@@ -443,13 +512,56 @@ namespace PLUGIN_NAMESPACE
 		return "Python";
 	}
 
-	void PythonPlugin::error(const char* message)
+	void PythonPlugin::error(const char* error_msg)
 	{
-		_api._logging->error(get_name(), message);
+		error("Unknown Error", error_msg);
 	}
 
-	void PythonPlugin::info(const char* message)
+	void PythonPlugin::error(const char* error_type, const char* error_msg)
 	{
-		_api._logging->info(get_name(), message);
+		if (strequal("<NULL>", error_msg))
+			return;
+
+		if (strequal(":", error_msg))
+			return;
+
+		char message[MAX_PATH];
+		_snprintf(message, MAX_PATH, "%s: %s", error_type, error_msg);
+
+		char* output = _strdup(message);
+
+		for (int i = 0; i < strlen(output); ++i) {
+			char c = output[i];
+			if (c == '<')
+				output[i] = '[';
+			else if (c == '>')
+				output[i] =']';
+		}
+
+		_api._logging->error(get_name(), output);
+		free(output);
+	}
+
+	void PythonPlugin::info(const char* msg)
+	{
+
+		if (strequal("<NULL>", msg))
+			return;
+
+		if (strequal(":", msg))
+			return;
+
+		char* output = _strdup(msg);
+
+		for (int i = 0; i < strlen(output); ++i) {
+			char c = output[i];
+			if (c == '<')
+				output[i] = '[';
+			else if (c == '>')
+				output[i] = ']';
+		}
+
+		_api._logging->info(get_name(), output);
+		free(output);
 	}
 }

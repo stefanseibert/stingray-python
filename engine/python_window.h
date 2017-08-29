@@ -3,7 +3,7 @@
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initwindow(void);
+	PyMODINIT_FUNC PyInit_Window(void);
 
 	class PythonWindow
 	{

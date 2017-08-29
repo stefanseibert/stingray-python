@@ -5,6 +5,7 @@ namespace PLUGIN_NAMESPACE
 	static PyMethodDef application_methods[] =
 	{
 		{ "argv", PythonApplication::py_argv, METH_VARARGS, "Returns the engine command-line arguments." },
+		{ "bundle_directory", PythonApplication::py_bundle_directory, METH_VARARGS, "Returns the current project folder." },
 		{ "new_world", (PyCFunction) PythonApplication::py_new_world, METH_VARARGS | METH_KEYWORDS, "Creates a new World." },
 		{ "release_world", PythonApplication::py_release_world, METH_VARARGS, "Releases a World." },
 		{ "create_viewport", PythonApplication::py_create_viewport, METH_VARARGS, "Creates a Viewport." },
@@ -17,12 +18,26 @@ namespace PLUGIN_NAMESPACE
 		{ NULL, NULL, 0, NULL }        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initapplication(void)
+	PyMODINIT_FUNC PyInit_Application(void)
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
-		app_module = Py_InitModule("stingray.Application", application_methods);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"Application",
+			"Stingray Application Python Module",
+			-1,
+			application_methods,
+			NULL, NULL, NULL, NULL
+		};
+
+		app_module = PyModule_Create(&moduledef);
+		if (app_module == NULL)
+			return NULL;
 		PyModule_AddObject(stingray_module, "Application", app_module);
+		return app_module;
+		
+
 	}
 
 	PyObject* PythonApplication::py_argv(PyObject* self, PyObject* args)
@@ -52,6 +67,21 @@ namespace PLUGIN_NAMESPACE
 		return argument_list;
 	}
 
+	PyObject* PythonApplication::py_bundle_directory(PyObject* self, PyObject* args)
+	{
+		const ApplicationOptions* opt = PythonPlugin::get_api()._application->options();
+		const char* dir = PythonPlugin::get_api()._options->bundle_directory(opt);
+
+		PyObject* py_dir = Py_BuildValue("s", dir);
+		if (py_dir) {
+			Py_IncRef(py_dir);
+			return py_dir;
+		}
+
+		PythonPlugin::check_exceptions();
+		Py_RETURN_NONE;
+	}
+
 	PyObject* PythonApplication::py_new_world(PyObject* self, PyObject* args, PyObject* keywords)
 	{
 		const char *keyword_list[] = { "DISABLE_APEX_CLOTH", "DISABLE_PHYSICS", "DISABLE_RENDERING",
@@ -66,25 +96,24 @@ namespace PLUGIN_NAMESPACE
 		if (PyArg_ParseTupleAndKeywords(empty, keywords, "|iiiiif", const_cast<char**>(keyword_list),&disable_apex_cloth, 
 										&disable_physics, &disable_rendering, &disable_sound,&enable_replay, &apex_lod_budget))
 		{
-			//TODO PUSH get_default_world_settings to stingray plugin api
-			//CApiWorldConfig c = PythonPlugin::get_api()._script->Application->get_default_world_settings();
-			//if (disable_apex_cloth != INT_MAX)
-			//	c.physics_world_settings.apex_cloth = !disable_apex_cloth;
-			//if (disable_physics != INT_MAX)
-			//	c.disable_physics = disable_physics;
-			//if (disable_rendering != INT_MAX)
-			//	c.disable_rendering = disable_rendering;
-			//if (disable_sound != INT_MAX)
-			//	c.disable_sound = disable_sound;
-			//if (enable_replay != INT_MAX)
-			//	c.enable_replay = enable_replay;
-			//if (disable_apex_cloth != INT_MAX && apex_lod_budget != 0.0f)
-			//	c.physics_world_settings.apex_lod_resource_budget = apex_lod_budget;
-			//WorldPtr world_ptr = PythonPlugin::get_api()._script->Application->new_world(&c);
-			//PyObject* python_world_ptr = PyLong_FromVoidPtr(world_ptr);
-			//Py_IncRef(python_world_ptr);
-			//return python_world_ptr;
-			return nullptr;
+			// TODO PUSH get_default_world_settings to stingray plugin api
+			CApiWorldConfig c = PythonPlugin::get_api()._script->Application->get_default_world_settings();
+			if (disable_apex_cloth != INT_MAX)
+				c.physics_world_settings.apex_cloth = !disable_apex_cloth;
+			if (disable_physics != INT_MAX)
+				c.disable_physics = disable_physics;
+			if (disable_rendering != INT_MAX)
+				c.disable_rendering = disable_rendering;
+			if (disable_sound != INT_MAX)
+				c.disable_sound = disable_sound;
+			if (enable_replay != INT_MAX)
+				c.enable_replay = enable_replay;
+			if (disable_apex_cloth != INT_MAX && apex_lod_budget != 0.0f)
+				c.physics_world_settings.apex_lod_resource_budget = apex_lod_budget;
+			WorldPtr world_ptr = PythonPlugin::get_api()._script->Application->new_world(&c);
+			PyObject* python_world_ptr = PyLong_FromVoidPtr(world_ptr);
+			Py_IncRef(python_world_ptr);
+			return python_world_ptr;
 		}
 
 		PythonPlugin::check_exceptions();
@@ -174,9 +203,8 @@ namespace PLUGIN_NAMESPACE
 		{
 			type_id = IdString64(type_length, type_name);
 			rsc_id = IdString64(rsc_length, rsc_name);
-			//TODO PUSH can_get to stingray plugin api
-			//if (PythonPlugin::get_api()._script->Application->can_get(type_id.id(), rsc_id.id()))
-			//	return Py_True;
+			if (PythonPlugin::get_api()._script->Application->can_get(type_id.id(), rsc_id.id()))
+				return Py_True;
 		}
 
 		PythonPlugin::check_exceptions();
@@ -231,9 +259,10 @@ namespace PLUGIN_NAMESPACE
 		return Py_False;
 	}
 
-	/*PyObject* PythonApplication::py_autoload_resource_package(PyObject* self, PyObject* args)
+	PyObject* PythonApplication::py_autoload_resource_package(PyObject* self, PyObject* args)
 	{
 		// TODO: NO C_API FUNCTIONALITY - CALLING LUA
+
 		const char* package_name = "";
 
 		if (PyArg_ParseTuple(args, "s", &package_name))
@@ -249,5 +278,5 @@ namespace PLUGIN_NAMESPACE
 
 		PythonPlugin::check_exceptions();
 		Py_RETURN_NONE;
-	}*/
+	}
 }

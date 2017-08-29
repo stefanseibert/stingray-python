@@ -3,7 +3,7 @@
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initstoryteller(void);
+	PyMODINIT_FUNC PyInit_StoryTeller(void);
 
 	class PythonStoryTeller
 	{

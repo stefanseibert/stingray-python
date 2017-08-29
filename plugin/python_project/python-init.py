@@ -12,22 +12,26 @@ Unit = stingray.Unit
 Window = stingray.Window
 World = stingray.World
 
-print "Python Boot File"
+print("Python Boot File")
 world = None
 viewport = None
 shading_env = None
+counter = 0
 
 def on_setup():
 	global world
 	global viewport
 	global shading_env
-	world = Application.new_world(DISABLE_SOUND = 1)
-	viewport = Application.create_viewport(world, "default")
+	#world = Application.new_world(DISABLE_SOUND = 1)
+	#viewport = Application.create_viewport(world, "default")
 	#shading_env = World.create_shading_environment(world, "core/stingray_renderer/environments/midday/midday")
 	#camera_unit = World.spawn_unit(world, "core/units/camera")
 
 def on_update( delta_time ):
-	pass
+	global counter
+	counter = counter + 1
+	world = Application.main_world()
+	World.spawn_unit(world, "core/units/primitives/cube_primitive", counter, counter, counter)
 
 def on_shutdown():
 	global world

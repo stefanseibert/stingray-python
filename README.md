@@ -1,10 +1,7 @@
-## Plugin to use Python 2.7.12 in Stingray
-
-Stingray is a real-time rendering engine from Autodesk:
-http://www.stingrayengine.com
+## Plugin to use Python 3.5 in the Stingray Component
 
 Installation Steps (only Windows 64bit currently):  
-Install Python 2.7.12 64bit on your disk, referred as [YOUR_INSTALL_PATH]  
+Install Python 3.5 64bit on your disk, referred as [YOUR_INSTALL_PATH]  
 Set the system variable PYTHON_INCLUDE_DIRS to [YOUR_INSTALL_PATH]\include  
 Set the system variable PYTHON_LIBRARIES to [YOUR_INSTALL_PATH]\libs  
 Set the system variable PYTHONPATH to [YOUR_INSTALL_PATH]
@@ -17,9 +14,19 @@ needed information on the official Stingray plugin page:
 https://github.com/AutodeskGames/stingray-plugin
 (There is also an step by step installation guide and Wiki)
 
-## How to get started with Python?
+## Known Problems in Debug Builds
 
-The example project of this plugin contains an example script how to hook your python code into Stingray
+If you wanna debug the plugin yourself and cannot get it run, this is because your python  
+installation is by default not installed as debug version. Either you get the python sources  
+yourself and build it in debug or use this workound:
+
+Go into the python lib Folder ([YOUR_INSTALL_PATH]/libs) and copy "python35.lib" to "python35_d.lib"  
+Open pyconfig.h ([YOUR_INSTALL_PATH]/include/pyconfig.h) and comment out the line "#define Py_DEBUG"  
+After this it should be possible to link to Python in Debug Builds
+
+## Additional information?
+
+The example project of this plugin contains example scripts how to hook your python code into Stingray
 
 ## Important Notes
 

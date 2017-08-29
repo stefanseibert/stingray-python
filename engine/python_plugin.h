@@ -38,6 +38,7 @@ namespace PLUGIN_NAMESPACE
 		ResourceManagerApi *_resource_manager;
 		ApplicationApi *_application;
 		ScriptApi *_script;
+		ApplicationOptionsApi *_options;
 	};
 
 	class PythonPlugin
@@ -66,8 +67,9 @@ namespace PLUGIN_NAMESPACE
 		static void refresh(uint64_t type, uint64_t name);
 		static DataCompileResult compile_python(DataCompileParameters *input);
 		static const char *get_name();
-		static void error(const char* message); // suger coating for python error reporting
-		static void info(const char* message); // suger coating for python info reporting
+		static void error(const char* type, const char* message);
+		static void error(const char* message);
+		static void info(const char* message);
 		static PyObject* register_setup(PyObject* self, PyObject* args);
 		static PyObject* register_update(PyObject* self, PyObject* args);
 		static PyObject* register_render(PyObject* self, PyObject* args);

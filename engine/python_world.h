@@ -3,10 +3,11 @@
 #include "plugin_foundation/id_string.h"
 #include "plugin_foundation/vector.h"
 #include "plugin_foundation/matrix4x4.h"
+#include "plugin_foundation/quaternion.h"
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initworld(void);
+	PyMODINIT_FUNC PyInit_World(void);
 
 	class PythonWorld
 	{

@@ -2,6 +2,8 @@
 
 namespace PLUGIN_NAMESPACE
 {
+	using namespace stingray_plugin_foundation;
+
 	static PyMethodDef world_methods[] =
 	{
 		{ "create_shading_environment", PythonWorld::py_create_shading_environment, METH_VARARGS, "Creates a Shading Environment." },
@@ -15,12 +17,21 @@ namespace PLUGIN_NAMESPACE
 		{ NULL, NULL, 0, NULL }        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initworld(void)
+	PyMODINIT_FUNC PyInit_World(void)
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
-		app_module = Py_InitModule("stingray.World", world_methods);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"World",
+			"Stingray World Python Module",
+			-1,
+			world_methods,
+			NULL, NULL, NULL, NULL
+		};
+		app_module = PyModule_Create(&moduledef);
 		PyModule_AddObject(stingray_module, "World", app_module);
+		return app_module;
 	}
 
 	PyObject* PythonWorld::py_create_shading_environment(PyObject* self, PyObject* args)
@@ -96,12 +107,41 @@ namespace PLUGIN_NAMESPACE
 		IdString64 unit_id;
 		unsigned length;
 
-		if (PyArg_ParseTuple(args, "Os#", &world, &unit_name, &length))
+		float x_pos = 0.0f;
+		float y_pos = 0.0f;
+		float z_pos = 0.0f;
+		float x_rot = 0.0f;
+		float y_rot = 0.0f;
+		float z_rot = 0.0f;
+		float w_rot = 1.0f;
+
+		if (PyArg_ParseTuple(args, "Os#|fffffff", &world, &unit_name, &length, &x_pos, &y_pos, &z_pos, &x_rot, &y_rot, &z_rot, &w_rot))
 		{
 			unit_id = IdString64(length, unit_name);
 			world_ptr = (WorldPtr)PyLong_AsVoidPtr(world);
+			CApiMatrix4x4 m = matrix4x4_identity();
+
 			if (world_ptr != nullptr && unit_id.nonempty()) {
-				UnitRef unit_ptr = PythonPlugin::get_api()._script->World->spawn_unit(world_ptr, unit_id.id(), unit_name, (ConstMatrix4x4Ptr) &matrix4x4_identity());
+
+				if (x_pos != 0.0f || y_pos != 0.0f || z_pos != 0.0f) {
+					CApiVector3 v;
+					v.x = x_pos;
+					v.y = y_pos;
+					v.z = z_pos;
+					set_translation(m, v);
+				}
+
+				if (x_rot != 0.0f || y_rot != 0.0f || z_rot != 0.0f || w_rot != 1.0f) {
+					CApiQuaternion q;
+					q.x = x_rot;
+					q.y = y_rot;
+					q.z = z_rot;
+					q.w = w_rot;
+					CApiMatrix4x4 r = matrix4x4(q);
+					set_rotation(m, r);
+				}
+
+				UnitRef unit_ptr = PythonPlugin::get_api()._script->World->spawn_unit(world_ptr, unit_id.id(), unit_name, (ConstMatrix4x4Ptr) &m);
 				if (unit_ptr != NULL)
 				{
 					PyObject* python_unit = Py_BuildValue("I", unit_ptr);

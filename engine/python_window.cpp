@@ -10,12 +10,21 @@ namespace PLUGIN_NAMESPACE
 		{ NULL, NULL, 0, NULL }        /* Sentinel */
 	};
 
-	PyMODINIT_FUNC initwindow(void)
+	PyMODINIT_FUNC PyInit_Window(void)
 	{
 		PyObject* app_module;
 		PyObject* stingray_module = PythonPlugin::get_stingray_module();
-		app_module = Py_InitModule("stingray.Window", window_methods);
+		static struct PyModuleDef moduledef = {
+			PyModuleDef_HEAD_INIT,
+			"Window",
+			"Stingray Window Python Module",
+			-1,
+			window_methods,
+			NULL, NULL, NULL, NULL
+		};
+		app_module = PyModule_Create(&moduledef);
 		PyModule_AddObject(stingray_module, "Window", app_module);
+		return app_module;
 	}
 
 	PyObject* PythonWindow::py_open_window(PyObject* self, PyObject* args, PyObject* keywords)

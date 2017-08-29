@@ -3,7 +3,7 @@
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initcaptureframe(void);
+	PyMODINIT_FUNC PyInit_CaptureFrame(void);
 
 	class PythonCaptureFrame
 	{

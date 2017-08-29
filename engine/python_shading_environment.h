@@ -3,7 +3,7 @@
 
 namespace PLUGIN_NAMESPACE
 {
-	PyMODINIT_FUNC initshadingenvironment(void);
+	PyMODINIT_FUNC PyInit_ShadingEnvironment(void);
 
 	class PythonShadingEnvironment
 	{
