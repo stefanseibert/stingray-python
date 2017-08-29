@@ -67,9 +67,9 @@ namespace PLUGIN_NAMESPACE
 		if (PyArg_ParseTuple(args, "I", &button_id))
 		{
 			auto keyboard_device = (InputControllerCApi*) PythonPlugin::get_api()._script->Input->InputController;
-			int button_value = keyboard_device->button(PythonPlugin::get_api()._script->Input->keyboard(), button_id);
+			float button_value = keyboard_device->button(PythonPlugin::get_api()._script->Input->keyboard(), button_id);
 
-			PyObject *python_button_value = Py_BuildValue("I", button_value);
+			PyObject *python_button_value = Py_BuildValue("f", button_value);
 			Py_IncRef(python_button_value);
 			return python_button_value;
 		}
