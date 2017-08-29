@@ -5,6 +5,7 @@ namespace PLUGIN_NAMESPACE
 	static PyMethodDef application_methods[] =
 	{
 		{ "argv", PythonApplication::py_argv, METH_VARARGS, "Returns the engine command-line arguments." },
+		{ "bundle_directory", PythonApplication::py_bundle_directory, METH_VARARGS, "Returns the current project folder." },
 		{ "new_world", (PyCFunction) PythonApplication::py_new_world, METH_VARARGS | METH_KEYWORDS, "Creates a new World." },
 		{ "release_world", PythonApplication::py_release_world, METH_VARARGS, "Releases a World." },
 		{ "create_viewport", PythonApplication::py_create_viewport, METH_VARARGS, "Creates a Viewport." },
@@ -64,6 +65,21 @@ namespace PLUGIN_NAMESPACE
 		}
 		Py_IncRef(argument_list);
 		return argument_list;
+	}
+
+	PyObject* PythonApplication::py_bundle_directory(PyObject* self, PyObject* args)
+	{
+		const ApplicationOptions* opt = PythonPlugin::get_api()._application->options();
+		const char* dir = PythonPlugin::get_api()._options->bundle_directory(opt);
+
+		PyObject* py_dir = Py_BuildValue("s", dir);
+		if (py_dir) {
+			Py_IncRef(py_dir);
+			return py_dir;
+		}
+
+		PythonPlugin::check_exceptions();
+		Py_RETURN_NONE;
 	}
 
 	PyObject* PythonApplication::py_new_world(PyObject* self, PyObject* args, PyObject* keywords)

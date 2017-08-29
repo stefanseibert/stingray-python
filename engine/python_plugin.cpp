@@ -60,6 +60,7 @@ namespace PLUGIN_NAMESPACE
 		_api._logging = (LoggingApi*)get_engine_api(LOGGING_API_ID);
 		_api._file_system = (FileSystemApi *)get_engine_api(FILESYSTEM_API_ID);
 		_api._resource_manager = (ResourceManagerApi *)get_engine_api(RESOURCE_MANAGER_API_ID);
+		_api._options = (ApplicationOptionsApi*)get_engine_api(APPLICATION_OPTIONS_API_ID);
 		_api._allocator = (AllocatorApi *)get_engine_api(ALLOCATOR_API_ID);
 		_api._allocator_object = _api._allocator->make_plugin_allocator("PythonPlugin");
 		_python_allocator = ApiAllocator(_api._allocator, _api._allocator_object);
@@ -347,6 +348,21 @@ namespace PLUGIN_NAMESPACE
 		return module;
 	}
 
+	int setup_project_path(lua_State *L)
+	{
+		const char *project_path = _api._lua->tolstring(L, 1, nullptr);
+		if (project_path == nullptr)
+			return 0;
+
+		PyModule_AddStringConstant(PythonPlugin::get_stingray_module(), "PROJECT_PATH", project_path);
+
+		char message[MAX_PATH];
+		_snprintf(message, MAX_PATH, "%s: %s", "Project Path set to: ", project_path);
+		PythonPlugin::info(message);
+
+		return 0;
+	}
+
 	void PythonPlugin::setup_game(GetApiFunction get_engine_api)
 	{
 		if (!_game_api_initialized)
@@ -354,14 +370,16 @@ namespace PLUGIN_NAMESPACE
 
 		wait_for_debugger();
 
+		_api._lua->add_module_function("Python", "set_project_directory", setup_project_path);
+
 		// Initialize Callback Data Structures
 		python_session = MAKE_NEW(get_allocator(), PythonSession, get_allocator());
 		PythonSession &p = *python_session;
 
 		// Initialize Python Interpreter and Main Stingray Module
 		Py_SetProgramName(L"Stingray");
-		PyImport_AppendInittab("stingray", PyInit_stingray);		
-		
+		PyImport_AppendInittab("stingray", PyInit_stingray);
+
 		Py_Initialize();
 		PyInit_write();
 		PyInit_error();

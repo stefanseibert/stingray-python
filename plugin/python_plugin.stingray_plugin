@@ -16,6 +16,17 @@ thumbnail = "sample_project/sample.svg"
 // Extensions
 //
 extensions = {
+
+    // Define some actions that can be triggered. i.e. on menu triggers or system events.
+    actions = [
+        { name= "python-on-editor-started" type = "js" module = "python-actions" function_name = "onEditorStarted" }
+    ]
+
+    // Define a set of event handlers that gets triggered on system events or user events.
+    events = [
+        { on = "EditorStarted" do = ["python-on-editor-started"] }
+    ]
+
     // Load the engine extension in the editor engine instance.
     runtime_libraries = [
         {

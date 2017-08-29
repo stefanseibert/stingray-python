@@ -38,6 +38,7 @@ namespace PLUGIN_NAMESPACE
 		ResourceManagerApi *_resource_manager;
 		ApplicationApi *_application;
 		ScriptApi *_script;
+		ApplicationOptionsApi *_options;
 	};
 
 	class PythonPlugin

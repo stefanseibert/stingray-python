@@ -9,6 +9,7 @@ namespace PLUGIN_NAMESPACE
 	{
 	public:
 		static PyObject* py_argv(PyObject* self, PyObject* args);
+		static PyObject* py_bundle_directory(PyObject* self, PyObject* args);
 		static PyObject* py_new_world(PyObject* self, PyObject* args, PyObject* keywords);
 		static PyObject* py_release_world(PyObject* self, PyObject* args);
 		static PyObject* py_create_viewport(PyObject* self, PyObject* args);
