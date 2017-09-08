@@ -12,7 +12,11 @@ to build the plugin by issuing "make" from the console.
 If you are new with Stingray plugins you can find all  
 needed information on the official Stingray plugin page:  
 https://github.com/AutodeskGames/stingray-plugin
-(There is also an step by step installation guide and Wiki)
+(There is also an step by step installation guide and Wiki)''
+
+## Versioning
+From V2.0 on this tool follows the versioning guidelines from Stingray. This means that the
+release/2.0.0 branch targets Stingray V2.0 and develop targets the current develop remote branch.
 
 ## Known Problems in Debug Builds
 
