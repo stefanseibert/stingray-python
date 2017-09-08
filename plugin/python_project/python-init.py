@@ -1,5 +1,8 @@
 #Python Boot Script for the Stingray Engine
 import stingray
+import threading
+import sys
+import os
 
 #Cached Modules
 Application = stingray.Application
@@ -17,25 +20,39 @@ world = None
 viewport = None
 shading_env = None
 counter = 0
+PATH_SET = False
+IMG_NAME = "RECOGNIZE.png"
 
 def on_setup():
-	global world
-	global viewport
-	global shading_env
-	#world = Application.new_world(DISABLE_SOUND = 1)
-	#viewport = Application.create_viewport(world, "default")
-	#shading_env = World.create_shading_environment(world, "core/stingray_renderer/environments/midday/midday")
-	#camera_unit = World.spawn_unit(world, "core/units/camera")
+	print(dir(stingray.World))
 
 def on_update( delta_time ):
+	# The project path is set from the engine and needs to be added as path
+	if hasattr(stingray, 'PROJECT_PATH') and not PATH_SET:
+		sys.path.append(stingray.PROJECT_PATH)
+		filename = stingray.PROJECT_PATH + "\\" + IMG_NAME
+		if os.path.isfile(filename):
+			recognize(filename)
+
 	global counter
-	counter = counter + 1
-	world = Application.main_world()
-	World.spawn_unit(world, "core/units/primitives/cube_primitive", counter, counter, counter)
+	if counter < 20:
+		counter = counter + 1
+		world = Application.main_world()
+		World.spawn_unit(world, "core/units/primitives/cube_primitive", counter, counter, counter)
 
 def on_shutdown():
 	global world
 	Application.release_world(world)
+
+
+def recognize(filename):
+	try:
+		import classify_image
+		thread = threading.Thread(target=classify_image.main, args=(filename))
+		thread.start()
+		return_val = thread.join()
+	except SystemExit as e:
+		pass
 
 stingray.register_setup(on_setup)
 stingray.register_update(on_update)
